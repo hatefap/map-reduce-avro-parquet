@@ -1,0 +1,8 @@
+.idea
+minput
+output
+target
+*.jar
+*.class
+*.crc
+*.parquet

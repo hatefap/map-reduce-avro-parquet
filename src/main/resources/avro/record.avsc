@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "namespace": "ir.sahab",
+    "name": "CustomAvroSchema",
+    "fields" : [
+        {"name": "random_generated_number", "type": "long"}
+    ]
+}
