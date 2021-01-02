@@ -83,20 +83,22 @@ public class SortParquet extends Configured implements Tool {
 
 
     public static void main(String[] args) throws Exception {
-        int statusCode = ToolRunner.run(new SortParquet(), args);
+        Configuration conf = new Configuration();
+        int statusCode = ToolRunner.run(conf, new SortParquet(), args);
         System.exit(statusCode);
 
     }
 
     @Override
     public int run(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        if(args.length != 2){
+        // hadoop jar warmup-1.0-SNAPSHOT-jar-with-dependencies.jar  sortparquet.SortParquet -D mapred.reduce.tasks=4 /tmp/avro.parquet /tmp/output19
+        if(args.length < 2){
             System.err.println("Invalid Command");
             System.exit(-1);
         }
-        Configuration conf = new Configuration();
 
-        Job job = Job.getInstance(conf);
+        Job job = Job.getInstance(getConf());
+
         job.setJobName("sort parquet file");
         job.setJarByClass(SortParquet.class);
 
@@ -106,7 +108,7 @@ public class SortParquet extends Configured implements Tool {
         job.setOutputKeyClass(Void.class);
         job.setOutputValueClass(SpecificRecord.class);
 
-        job.setNumReduceTasks(NUMBER_OF_REDUCERS);
+        //job.setNumReduceTasks(NUMBER_OF_REDUCERS);
 
         job.setMapperClass(ParquetMap.class);
         job.setPartitionerClass(ParquetPartitioner.class);
@@ -123,8 +125,6 @@ public class SortParquet extends Configured implements Tool {
         AvroParquetOutputFormat.setPageSize(job, PAGE_SIZE);
         AvroParquetOutputFormat.setCompression(job, CompressionCodecName.SNAPPY);
         AvroParquetOutputFormat.setSchema(job, avroSchema);
-
-
         return job.waitForCompletion(true) ? 0 : 1;
     }
 
